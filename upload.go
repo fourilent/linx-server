@@ -313,6 +313,9 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 		upload.Filename = strings.Join([]string{barename, extension}, ".")
 
 		fileexists, err = storageBackend.Exists(upload.Filename)
+		if err != nil {
+			return upload, err
+		}
 	}
 
 	if fileBlacklist[strings.ToLower(upload.Filename)] {

@@ -39,6 +39,9 @@ func (b LocalfsBackend) Delete(key string) (err error) {
 
 func (b LocalfsBackend) Exists(key string) (bool, error) {
 	_, err := os.Stat(path.Join(b.filesPath, key))
+	if os.IsNotExist(err) {
+		return false, nil
+	}
 	return err == nil, err
 }
 
