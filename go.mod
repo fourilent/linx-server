@@ -6,7 +6,6 @@ toolchain go1.22.2
 
 require (
 	github.com/GeertJohan/go.rice v1.0.3
-	github.com/aws/aws-sdk-go v1.51.25
 	github.com/dchest/uniuri v1.2.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/flosch/pongo2 v0.0.0-20200913210552-0d938eb266f3
@@ -24,7 +23,6 @@ require (
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/daaku/go.zipexe v1.0.2 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
