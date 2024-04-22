@@ -83,7 +83,6 @@ var staticBox *rice.Box
 var timeStarted time.Time
 var timeStartedStr string
 var remoteAuthKeys []string
-var metaStorageBackend backends.MetaStorageBackend
 var storageBackend backends.StorageBackend
 var customPages = make(map[string]string)
 var customPagesNames = make(map[string]string)
