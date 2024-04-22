@@ -45,7 +45,7 @@ func TestContentSecurityPolicy(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	for k, v := range testCSPHeaders {
-		if w.HeaderMap[k][0] != v {
+		if w.Header().Get(k) != v {
 			t.Fatalf("%s header did not match expected value set by middleware", k)
 		}
 	}

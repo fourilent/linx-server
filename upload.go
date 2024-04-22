@@ -108,7 +108,10 @@ func uploadPostHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err == FileTooLargeError || err == backends.FileEmptyError {
 			badRequestHandler(c, w, r, RespHTML, err.Error())
@@ -143,7 +146,10 @@ func uploadPutHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err == FileTooLargeError || err == backends.FileEmptyError {
 			badRequestHandler(c, w, r, RespPLAIN, err.Error())
@@ -212,7 +218,10 @@ func uploadRemote(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err != nil {
 			oopsHandler(c, w, r, RespHTML, "Could not upload file: "+err.Error())
@@ -283,14 +292,14 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 		if merr == nil {
 			if upReq.deleteKey == metad.DeleteKey {
 				fileexists = false
-			} else if Config.forceRandomFilename == true {
+			} else if Config.forceRandomFilename {
 				// the file exists
 				// the delete key doesn't match
 				// force random filenames is enabled
 				randomize = true
 			}
 		}
-	} else if Config.forceRandomFilename == true {
+	} else if Config.forceRandomFilename {
 		// the file doesn't exist
 		// force random filenames is enabled
 		randomize = true
@@ -313,6 +322,9 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 		upload.Filename = strings.Join([]string{barename, extension}, ".")
 
 		fileexists, err = storageBackend.Exists(upload.Filename)
+		if err != nil {
+			return upload, err
+		}
 	}
 
 	if fileBlacklist[strings.ToLower(upload.Filename)] {
@@ -339,7 +351,7 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 	if upReq.deleteKey == "" {
 		upReq.deleteKey = uniuri.NewLen(30)
 	}
-	if Config.disableAccessKey == true {
+	if Config.disableAccessKey {
 		upReq.accessKey = ""
 	}
 	upload.Metadata, err = storageBackend.Put(upload.Filename, io.MultiReader(bytes.NewReader(header), upReq.src), fileExpiry, upReq.deleteKey, upReq.accessKey, upReq.srcIp)

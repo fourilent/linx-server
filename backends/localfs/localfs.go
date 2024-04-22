@@ -3,7 +3,6 @@ package localfs
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -40,6 +39,9 @@ func (b LocalfsBackend) Delete(key string) (err error) {
 
 func (b LocalfsBackend) Exists(key string) (bool, error) {
 	_, err := os.Stat(path.Join(b.filesPath, key))
+	if os.IsNotExist(err) {
+		return false, nil
+	}
 	return err == nil, err
 }
 
@@ -108,7 +110,6 @@ func (b LocalfsBackend) writeMetadata(key string, metadata backends.Metadata) er
 		Expiry:       metadata.Expiry.Unix(),
 		Size:         metadata.Size,
 		SrcIp:        metadata.SrcIp,
-		
 	}
 
 	dst, err := os.Create(metaPath)
@@ -145,13 +146,13 @@ func (b LocalfsBackend) Put(key string, r io.Reader, expiry time.Time, deleteKey
 		return m, err
 	}
 
-	dst.Seek(0, 0)
+	_, err = dst.Seek(0, 0)
 	m, err = helpers.GenerateMetadata(dst)
+	_, err = dst.Seek(0, 0)
 	if err != nil {
 		os.Remove(filePath)
 		return
 	}
-	dst.Seek(0, 0)
 
 	m.Expiry = expiry
 	m.DeleteKey = deleteKey
@@ -189,7 +190,7 @@ func (b LocalfsBackend) Size(key string) (int64, error) {
 func (b LocalfsBackend) List() ([]string, error) {
 	var output []string
 
-	files, err := ioutil.ReadDir(b.filesPath)
+	files, err := os.ReadDir(b.filesPath)
 	if err != nil {
 		return nil, err
 	}

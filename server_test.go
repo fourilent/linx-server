@@ -342,7 +342,7 @@ func TestPostCodeExpiryJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -375,7 +375,10 @@ func TestPostUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -409,7 +412,10 @@ func TestPostJSONUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -428,7 +434,7 @@ func TestPostJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -484,7 +490,7 @@ func TestPostJSONUpload(t *testing.T) {
 // 		}
 
 // 		var myjson RespOkJSON
-// 		err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+// 		err = json.Unmarshal(w.Body.Bytes(), &myjson)
 // 		if err != nil {
 // 			t.Fatal(err)
 // 		}
@@ -515,13 +521,19 @@ func TestPostExpiresJSONUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	exp, err := mw.CreateFormField("expires")
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp.Write([]byte("60"))
+	_, err = exp.Write([]byte("60"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	mw.Close()
 
@@ -541,7 +553,7 @@ func TestPostExpiresJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -577,13 +589,19 @@ func TestPostRandomizeJSONUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rnd, err := mw.CreateFormField("randomize")
 	if err != nil {
 		t.Fatal(err)
 	}
-	rnd.Write([]byte("true"))
+	_, err = rnd.Write([]byte("true"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	mw.Close()
 
@@ -603,7 +621,7 @@ func TestPostRandomizeJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -630,7 +648,10 @@ func TestPostEmptyUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte(""))
+	_, err = fw.Write([]byte(""))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -663,7 +684,10 @@ func TestPostTooLargeUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("test content"))
+	_, err = fw.Write([]byte("test content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -696,7 +720,10 @@ func TestPostEmptyJSONUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte(""))
+	_, err = fw.Write([]byte(""))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -715,7 +742,7 @@ func TestPostEmptyJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespErrJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -876,7 +903,7 @@ func TestPutJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -904,7 +931,7 @@ func TestPutRandomizedJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -932,7 +959,7 @@ func TestPutExpireJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -961,7 +988,7 @@ func TestPutAndDelete(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -969,6 +996,10 @@ func TestPutAndDelete(t *testing.T) {
 	// Delete it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("DELETE", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -979,6 +1010,9 @@ func TestPutAndDelete(t *testing.T) {
 	// Make sure it's actually gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -988,6 +1022,10 @@ func TestPutAndDelete(t *testing.T) {
 	// Make sure torrent is also gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1010,7 +1048,7 @@ func TestPutAndOverwrite(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1018,6 +1056,10 @@ func TestPutAndOverwrite(t *testing.T) {
 	// Overwrite it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("PUT", "/upload/"+myjson.Filename, strings.NewReader("New file content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -1028,6 +1070,10 @@ func TestPutAndOverwrite(t *testing.T) {
 	// Make sure it's the new file
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+Config.selifPath+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code == 404 {
@@ -1057,7 +1103,7 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1065,6 +1111,10 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 	// Overwrite it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("PUT", "/upload/"+myjson.Filename, strings.NewReader("New file content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -1075,6 +1125,10 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 	// Make sure it's the new file
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+Config.selifPath+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code == 404 {
@@ -1104,7 +1158,7 @@ func TestPutAndSpecificDelete(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1112,6 +1166,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Delete it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("DELETE", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", "supersecret")
 	mux.ServeHTTP(w, req)
 
@@ -1122,6 +1180,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Make sure it's actually gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1131,6 +1193,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Make sure torrent is gone too
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1270,7 +1336,7 @@ func TestPutAndGetCLI(t *testing.T) {
 	req.Header.Set("Accept", "application/json")
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}

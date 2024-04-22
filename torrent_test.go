@@ -24,7 +24,7 @@ func TestCreateTorrent(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	bencode.DecodeBytes(encoded, &decoded)
+	_ = bencode.DecodeBytes(encoded, &decoded)
 
 	if decoded.Encoding != "UTF-8" {
 		t.Fatalf("Encoding was %s, expected UTF-8", decoded.Encoding)
@@ -66,7 +66,7 @@ func TestCreateTorrentWithImage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	bencode.DecodeBytes(encoded, &decoded)
+	_ = bencode.DecodeBytes(encoded, &decoded)
 
 	if decoded.Info.Pieces != "\xd6\xff\xbf'^)\x85?\xb4.\xb0\xc1|\xa3\x83\xeeX\xf9\xfd\xd7" {
 		t.Fatal("Torrent pieces did not match expected pieces for image")

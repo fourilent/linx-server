@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -40,7 +40,10 @@ func fileDisplayHandler(c web.C, w http.ResponseWriter, r *http.Request, fileNam
 			"mimetype":   metadata.Mimetype,
 			"sha256sum":  metadata.Sha256sum,
 		})
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespHTML, "")
+		}
 		return
 	}
 
@@ -65,7 +68,7 @@ func fileDisplayHandler(c web.C, w http.ResponseWriter, r *http.Request, fileNam
 		}
 
 		if metadata.Size < maxDisplayFileSizeBytes {
-			bytes, err := ioutil.ReadAll(reader)
+			bytes, err := io.ReadAll(reader)
 			if err == nil {
 				extra["contents"] = string(bytes)
 				lines = strings.Split(extra["contents"], "\n")
@@ -80,7 +83,7 @@ func fileDisplayHandler(c web.C, w http.ResponseWriter, r *http.Request, fileNam
 		}
 
 		if metadata.Size < maxDisplayFileSizeBytes {
-			bytes, err := ioutil.ReadAll(reader)
+			bytes, err := io.ReadAll(reader)
 			if err == nil {
 				unsafe := blackfriday.MarkdownCommon(bytes)
 				html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
@@ -97,7 +100,7 @@ func fileDisplayHandler(c web.C, w http.ResponseWriter, r *http.Request, fileNam
 		}
 
 		if metadata.Size < maxDisplayFileSizeBytes {
-			bytes, err := ioutil.ReadAll(reader)
+			bytes, err := io.ReadAll(reader)
 			if err == nil {
 				extra["extension"] = extension
 				extra["lang_hl"] = extensionToHlLang(extension)

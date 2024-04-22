@@ -83,7 +83,6 @@ var staticBox *rice.Box
 var timeStarted time.Time
 var timeStartedStr string
 var remoteAuthKeys []string
-var metaStorageBackend backends.MetaStorageBackend
 var storageBackend backends.StorageBackend
 var customPages = make(map[string]string)
 var customPagesNames = make(map[string]string)
@@ -333,7 +332,10 @@ func main() {
 		}
 
 		log.Printf("Serving over fastcgi, bound on %s", Config.bind)
-		fcgi.Serve(listener, mux)
+		err = fcgi.Serve(listener, mux)
+		if err != nil {
+			log.Fatal("Could not serve: ", err)
+		}
 	} else if Config.certFile != "" {
 		log.Printf("Serving over https, bound on %s", Config.bind)
 		err := graceful.ListenAndServeTLS(Config.bind, Config.certFile, Config.keyFile, mux)

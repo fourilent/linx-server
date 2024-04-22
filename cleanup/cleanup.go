@@ -28,7 +28,12 @@ func Cleanup(filesDir string, metaDir string, noLogs bool) {
 			if !noLogs {
 				log.Printf("Delete %s", filename)
 			}
-			fileBackend.Delete(filename)
+			err = fileBackend.Delete(filename)
+			if err != nil {
+				if !noLogs {
+					log.Printf("Failed to delete %s", filename)
+				}
+			}
 		}
 	}
 }

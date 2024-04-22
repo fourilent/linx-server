@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	"github.com/andreimarcu/linx-server/expiry"
 	"github.com/dustin/go-humanize"
 )
 
@@ -24,16 +23,6 @@ var defaultExpiryList = []uint64{
 type ExpirationTime struct {
 	Seconds uint64
 	Human   string
-}
-
-// Determine if the given filename is expired
-func isFileExpired(filename string) (bool, error) {
-	metadata, err := storageBackend.Head(filename)
-	if err != nil {
-		return false, err
-	}
-
-	return expiry.IsTsExpired(metadata.Expiry), nil
 }
 
 // Return a list of expiration times and their humanized versions
@@ -61,7 +50,7 @@ func listExpirationTimes() []ExpirationTime {
 			0,
 			"never",
 		})
-	} else if actualExpiryInList == false {
+	} else if !actualExpiryInList {
 		duration := time.Duration(Config.maxExpiry) * time.Second
 		expiryList = append(expiryList, ExpirationTime{
 			Config.maxExpiry,
