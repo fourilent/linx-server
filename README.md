@@ -99,7 +99,6 @@ maxexpiry = 86400
 | ```refererpolicy = "..."``` | Referrer-Policy header for pages (default is "same-origin")
 | ```filereferrerpolicy = "..."``` | Referrer-Policy header for files (default is "same-origin")
 | ```xframeoptions = "..." ``` | X-Frame-Options header (default is "SAMEORIGIN")
-| ```remoteuploads = true``` | (optionally) enable remote uploads (/upload?url=https://...) 
 | ```nologs = true``` | (optionally) disable request logs in stdout
 | ```force-random-filename = true``` | (optionally) force the use of random filenames
 | ```custompagespath = custom_pages/``` | (optionally) specify path to directory containing markdown pages (must end in .md) that will be added to the site navigation (this can be useful for providing contact/support information and so on). For example, custom_pages/My_Page.md will become My Page in the site navigation 
@@ -125,7 +124,6 @@ will persist on disk until someone attempts to access them. You can set the foll
 |Option|Description
 |------|-----------
 | ```authfile = path/to/authfile``` | (optionally) require authorization for upload/delete by providing a newline-separated file of scrypted auth keys
-| ```remoteauthfile = path/to/remoteauthfile``` | (optionally) require authorization for remote uploads by providing a newline-separated file of scrypted auth keys
 | ```basicauth = true``` | (optionally) allow basic authorization to upload or paste files from browser when `-authfile` is enabled. When uploading, you will be prompted to enter a user and password - leave the user blank and use your auth key as the password
 
 A helper utility ```linx-genkey``` is provided which hashes keys to the format required in the auth files.
@@ -150,40 +148,14 @@ The following storage backends are available:
 |------|-----------
 | ```realip = true``` | let linx-server know you (nginx, etc) are providing the X-Real-IP and/or X-Forwarded-For headers.
 
-#### Use with fastcgi
-|Option|Description
-|------|-----------
-| ```fastcgi = true``` | serve through fastcgi 
-
 Deployment
 ----------
 Linx-server supports being deployed in a subdirectory (ie. example.com/mylinx/) as well as on its own (example.com/).
 
-
-#### 1. Using fastcgi
-
-A suggested deployment is running nginx in front of linx-server serving through fastcgi.
-This allows you to have nginx handle the TLS termination for example.  
-An example configuration:
-```
-server {
-    ...
-    server_name yourlinx.example.org;
-    ...
-    
-    client_max_body_size 4096M;
-    location / {
-        fastcgi_pass 127.0.0.1:8080;
-        include fastcgi_params;
-    }
-}
-```
-And run linx-server with the ```fastcgi = true``` option.
-
-#### 2. Using the built-in https server
+#### 1. Using the built-in https server
 Run linx-server with the ```certfile = path/to/cert.file``` and ```keyfile = path/to/key.file``` options.
 
-#### 3. Using the built-in http server
+#### 2. Using the built-in http server
 Run linx-server normally.
 
 Development

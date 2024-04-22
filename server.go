@@ -3,16 +3,12 @@ package main
 import (
 	"flag"
 	"log"
-	"net"
 	"net/http"
-	"net/http/fcgi"
 	"net/url"
 	"os"
-	"os/signal"
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	rice "github.com/GeertJohan/go.rice"
@@ -59,7 +55,6 @@ var Config struct {
 	realIp                    bool
 	noLogs                    bool
 	allowHotlink              bool
-	fastcgi                   bool
 	basicAuth                 bool
 	authFile                  string
 	addHeaders                headerList
@@ -247,8 +242,6 @@ func main() {
 		"path to ssl key (for https)")
 	flag.BoolVar(&Config.realIp, "realip", false,
 		"use X-Real-IP/X-Forwarded-For headers as original host")
-	flag.BoolVar(&Config.fastcgi, "fastcgi", false,
-		"serve through fastcgi")
 	flag.StringVar(&Config.authFile, "authfile", "",
 		"path to a file containing newline-separated scrypted auth keys")
 	flag.StringVar(&Config.contentSecurityPolicy, "contentsecuritypolicy",
@@ -286,38 +279,7 @@ func main() {
 
 	mux := setup()
 
-	if Config.fastcgi {
-		var listener net.Listener
-		var err error
-		if Config.bind[0] == '/' {
-			// UNIX path
-			listener, err = net.ListenUnix("unix", &net.UnixAddr{Name: Config.bind, Net: "unix"})
-			cleanup := func() {
-				log.Print("Removing FastCGI socket")
-				os.Remove(Config.bind)
-			}
-			defer cleanup()
-			sigs := make(chan os.Signal, 1)
-			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-			go func() {
-				sig := <-sigs
-				log.Print("Signal: ", sig)
-				cleanup()
-				os.Exit(0)
-			}()
-		} else {
-			listener, err = net.Listen("tcp", Config.bind)
-		}
-		if err != nil {
-			log.Fatal("Could not bind: ", err)
-		}
-
-		log.Printf("Serving over fastcgi, bound on %s", Config.bind)
-		err = fcgi.Serve(listener, mux)
-		if err != nil {
-			log.Fatal("Could not serve: ", err)
-		}
-	} else if Config.certFile != "" {
+	if Config.certFile != "" {
 		log.Printf("Serving over https, bound on %s", Config.bind)
 		err := graceful.ListenAndServeTLS(Config.bind, Config.certFile, Config.keyFile, mux)
 		if err != nil {

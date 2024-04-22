@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"mime/multipart"
@@ -1279,29 +1278,6 @@ func TestInferSiteURLHTTPS(t *testing.T) {
 
 	Config.siteURL = oldSiteURL
 	Config.certFile = oldCertFile
-}
-
-func TestInferSiteURLHTTPSFastCGI(t *testing.T) {
-	oldSiteURL := Config.siteURL
-	Config.siteURL = ""
-
-	mux := setup()
-	w := httptest.NewRecorder()
-
-	req, err := http.NewRequest("GET", "/API/", nil)
-	req.Host = "example.com"
-	req.TLS = &tls.ConnectionState{HandshakeComplete: true}
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	mux.ServeHTTP(w, req)
-
-	if !strings.Contains(w.Body.String(), "https://example.com/upload/") {
-		t.Fatal("Site URL not found properly embedded in response")
-	}
-
-	Config.siteURL = oldSiteURL
 }
 
 func TestShutdown(t *testing.T) {
