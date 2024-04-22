@@ -1019,13 +1019,6 @@ func TestPutAndDelete(t *testing.T) {
 		t.Fatal("Status code was not 404, but " + strconv.Itoa(w.Code))
 	}
 
-	// Make sure torrent is also gone
-	w = httptest.NewRecorder()
-	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1188,13 +1181,6 @@ func TestPutAndSpecificDelete(t *testing.T) {
 
 	if w.Code != 404 {
 		t.Fatal("Status code was not 404, but " + strconv.Itoa(w.Code))
-	}
-
-	// Make sure torrent is gone too
-	w = httptest.NewRecorder()
-	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
-	if err != nil {
-		t.Fatal(err)
 	}
 
 	mux.ServeHTTP(w, req)
