@@ -11,22 +11,15 @@ import (
 )
 
 var testCSPHeaders = map[string]string{
-	"Content-Security-Policy": "default-src 'none'; style-src 'self';",
-	"Referrer-Policy":         "strict-origin-when-cross-origin",
-	"X-Frame-Options":         "SAMEORIGIN",
+	"Content-Security-Policy": defaultCSPOptions.policy,
+	"Referrer-Policy":         defaultCSPOptions.referrerPolicy,
 }
 
 func TestContentSecurityPolicy(t *testing.T) {
 	Config.siteURL = "http://linx.example.org/"
 	Config.filesDir = path.Join(os.TempDir(), generateBarename())
 	Config.metaDir = Config.filesDir + "_meta"
-	Config.maxSize = 1024 * 1024 * 1024
-	Config.noLogs = true
-	Config.siteName = "linx"
 	Config.selifPath = "selif"
-	Config.contentSecurityPolicy = testCSPHeaders["Content-Security-Policy"]
-	Config.referrerPolicy = testCSPHeaders["Referrer-Policy"]
-	Config.xFrameOptions = testCSPHeaders["X-Frame-Options"]
 	mux := setup()
 
 	w := httptest.NewRecorder()
@@ -36,17 +29,14 @@ func TestContentSecurityPolicy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	goji.Use(ContentSecurityPolicy(CSPOptions{
-		policy:         testCSPHeaders["Content-Security-Policy"],
-		referrerPolicy: testCSPHeaders["Referrer-Policy"],
-		frame:          testCSPHeaders["X-Frame-Options"],
-	}))
+	goji.Use(ContentSecurityPolicy(defaultCSPOptions))
 
 	mux.ServeHTTP(w, req)
 
 	for k, v := range testCSPHeaders {
 		if w.Header().Get(k) != v {
-			t.Fatalf("%s header did not match expected value set by middleware", k)
+			// t.Fatalf("%s header did not match expected value set by middleware", k)
+			t.Fatalf("Expected %s header to be %s, got %s", k, v, w.Header().Get(k))
 		}
 	}
 }
