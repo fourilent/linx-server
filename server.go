@@ -35,39 +35,35 @@ func (h *headerList) Set(value string) error {
 }
 
 var Config struct {
-	bind                      string
-	filesDir                  string
-	metaDir                   string
-	siteName                  string
-	siteURL                   string
-	sitePath                  string
-	selifPath                 string
-	certFile                  string
-	keyFile                   string
-	contentSecurityPolicy     string
-	fileContentSecurityPolicy string
-	referrerPolicy            string
-	fileReferrerPolicy        string
-	xFrameOptions             string
-	maxSize                   int64
-	maxExpiry                 uint64
-	defaultExpiry             uint64
-	realIp                    bool
-	noLogs                    bool
-	allowHotlink              bool
-	basicAuth                 bool
-	authFile                  string
-	addHeaders                headerList
-	noDirectAgents            bool
-	forceRandomFilename       bool
-	accessKeyCookieExpiry     uint64
-	customPagesDir            string
-	cleanupEveryMinutes       uint64
-	extraFooterText           string
-	maxDurationTime           uint64
-	maxDurationSize           int64
-	disableAccessKey          bool
-	defaultRandomFilename     bool
+	bind                   string
+	filesDir               string
+	metaDir                string
+	siteName               string
+	siteURL                string
+	sitePath               string
+	selifPath              string
+	certFile               string
+	keyFile                string
+	disableSecurityHeaders bool
+	maxSize                int64
+	maxExpiry              uint64
+	defaultExpiry          uint64
+	realIp                 bool
+	noLogs                 bool
+	allowHotlink           bool
+	basicAuth              bool
+	authFile               string
+	addHeaders             headerList
+	noDirectAgents         bool
+	forceRandomFilename    bool
+	accessKeyCookieExpiry  uint64
+	customPagesDir         string
+	cleanupEveryMinutes    uint64
+	extraFooterText        string
+	maxDurationTime        uint64
+	maxDurationSize        int64
+	disableAccessKey       bool
+	defaultRandomFilename  bool
 }
 
 var Templates = make(map[string]*pongo2.Template)
@@ -95,11 +91,10 @@ func setup() *web.Mux {
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.AutomaticOptions)
-	mux.Use(ContentSecurityPolicy(CSPOptions{
-		policy:         Config.contentSecurityPolicy,
-		referrerPolicy: Config.referrerPolicy,
-		frame:          Config.xFrameOptions,
-	}))
+	if !Config.disableSecurityHeaders {
+		mux.Use(ContentSecurityPolicy(defaultCSPOptions))
+	}
+
 	mux.Use(AddHeaders(Config.addHeaders))
 
 	if Config.authFile != "" {
@@ -244,20 +239,6 @@ func main() {
 		"use X-Real-IP/X-Forwarded-For headers as original host")
 	flag.StringVar(&Config.authFile, "authfile", "",
 		"path to a file containing newline-separated scrypted auth keys")
-	flag.StringVar(&Config.contentSecurityPolicy, "contentsecuritypolicy",
-		"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'self';",
-		"value of default Content-Security-Policy header")
-	flag.StringVar(&Config.fileContentSecurityPolicy, "filecontentsecuritypolicy",
-		"default-src 'none'; img-src 'self'; object-src 'self'; media-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self';",
-		"value of Content-Security-Policy header for file access")
-	flag.StringVar(&Config.referrerPolicy, "referrerpolicy",
-		"same-origin",
-		"value of default Referrer-Policy header")
-	flag.StringVar(&Config.fileReferrerPolicy, "filereferrerpolicy",
-		"same-origin",
-		"value of Referrer-Policy header for file access")
-	flag.StringVar(&Config.xFrameOptions, "xframeoptions", "",
-		"value of X-Frame-Options header")
 	flag.Var(&Config.addHeaders, "addheader",
 		"Add an arbitrary header to the response. This option can be used multiple times.")
 	flag.BoolVar(&Config.noDirectAgents, "nodirectagents", false,

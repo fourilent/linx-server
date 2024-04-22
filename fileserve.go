@@ -46,9 +46,10 @@ func fileServeHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Content-Security-Policy", Config.fileContentSecurityPolicy)
-	w.Header().Set("Referrer-Policy", Config.fileReferrerPolicy)
-
+	if !Config.disableSecurityHeaders {
+		w.Header().Set(cspHeader, defaultFileCSPOptions.policy)
+		w.Header().Set(rpHeader, defaultFileCSPOptions.referrerPolicy)
+	}
 	w.Header().Set("Content-Type", metadata.Mimetype)
 	w.Header().Set("Content-Length", strconv.FormatInt(metadata.Size, 10))
 	w.Header().Set("Etag", fmt.Sprintf("\"%s\"", metadata.Sha256sum))
