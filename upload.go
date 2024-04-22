@@ -22,6 +22,7 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/zenazn/goji/web"
 )
+
 var FileTooLargeError = errors.New("File too large.")
 var fileBlacklist = map[string]bool{
 	"favicon.ico":     true,
@@ -124,7 +125,7 @@ func uploadPostHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 func uploadPutHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 	upReq := UploadRequest{}
 	uploadHeaderProcess(r, &upReq)
-	
+
 	defer r.Body.Close()
 	upReq.filename = c.URLParams["name"]
 	upReq.src = http.MaxBytesReader(w, r.Body, Config.maxSize)
@@ -193,7 +194,7 @@ func uploadRemote(c web.C, w http.ResponseWriter, r *http.Request) {
 		oopsHandler(c, w, r, RespAUTO, "Could not retrieve URL")
 		return
 	}
-	
+
 	upReq.filename = filepath.Base(grabUrl.Path)
 	upReq.src = http.MaxBytesReader(w, resp.Body, Config.maxSize)
 	upReq.deleteKey = r.FormValue("deletekey")
@@ -323,13 +324,13 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 	maxDurationTime := time.Duration(Config.maxDurationTime) * time.Second
 	if upReq.expiry == 0 {
 		if upReq.size > Config.maxDurationSize && maxDurationTime > 0 {
-				fileExpiry = time.Now().Add(maxDurationTime)
+			fileExpiry = time.Now().Add(maxDurationTime)
 		} else {
 			fileExpiry = expiry.NeverExpire
 		}
 	} else {
 		if upReq.size > Config.maxDurationSize && upReq.expiry > maxDurationTime {
-				fileExpiry = time.Now().Add(maxDurationTime)
+			fileExpiry = time.Now().Add(maxDurationTime)
 		} else {
 			fileExpiry = time.Now().Add(upReq.expiry)
 		}
