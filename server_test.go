@@ -969,6 +969,10 @@ func TestPutAndDelete(t *testing.T) {
 	// Delete it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("DELETE", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -979,6 +983,9 @@ func TestPutAndDelete(t *testing.T) {
 	// Make sure it's actually gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -988,6 +995,10 @@ func TestPutAndDelete(t *testing.T) {
 	// Make sure torrent is also gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1018,6 +1029,10 @@ func TestPutAndOverwrite(t *testing.T) {
 	// Overwrite it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("PUT", "/upload/"+myjson.Filename, strings.NewReader("New file content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -1028,6 +1043,10 @@ func TestPutAndOverwrite(t *testing.T) {
 	// Make sure it's the new file
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+Config.selifPath+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code == 404 {
@@ -1065,6 +1084,10 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 	// Overwrite it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("PUT", "/upload/"+myjson.Filename, strings.NewReader("New file content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", myjson.Delete_Key)
 	mux.ServeHTTP(w, req)
 
@@ -1075,6 +1098,10 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 	// Make sure it's the new file
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+Config.selifPath+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code == 404 {
@@ -1112,6 +1139,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Delete it
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("DELETE", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	req.Header.Set("Linx-Delete-Key", "supersecret")
 	mux.ServeHTTP(w, req)
 
@@ -1122,6 +1153,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Make sure it's actually gone
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {
@@ -1131,6 +1166,10 @@ func TestPutAndSpecificDelete(t *testing.T) {
 	// Make sure torrent is gone too
 	w = httptest.NewRecorder()
 	req, err = http.NewRequest("GET", "/"+myjson.Filename+"/torrent", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	mux.ServeHTTP(w, req)
 
 	if w.Code != 404 {

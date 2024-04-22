@@ -40,7 +40,7 @@ func getSiteURL(r *http.Request) string {
 
 		if scheme := r.Header.Get("X-Forwarded-Proto"); scheme != "" {
 			u.Scheme = scheme
-		} else if Config.certFile != "" || (r.TLS != nil && r.TLS.HandshakeComplete == true) {
+		} else if Config.certFile != "" || (r.TLS != nil && r.TLS.HandshakeComplete) {
 			u.Scheme = "https"
 		} else {
 			u.Scheme = "http"

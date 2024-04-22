@@ -283,14 +283,14 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 		if merr == nil {
 			if upReq.deleteKey == metad.DeleteKey {
 				fileexists = false
-			} else if Config.forceRandomFilename == true {
+			} else if Config.forceRandomFilename {
 				// the file exists
 				// the delete key doesn't match
 				// force random filenames is enabled
 				randomize = true
 			}
 		}
-	} else if Config.forceRandomFilename == true {
+	} else if Config.forceRandomFilename {
 		// the file doesn't exist
 		// force random filenames is enabled
 		randomize = true
@@ -339,7 +339,7 @@ func processUpload(upReq UploadRequest) (upload Upload, err error) {
 	if upReq.deleteKey == "" {
 		upReq.deleteKey = uniuri.NewLen(30)
 	}
-	if Config.disableAccessKey == true {
+	if Config.disableAccessKey {
 		upReq.accessKey = ""
 	}
 	upload.Metadata, err = storageBackend.Put(upload.Filename, io.MultiReader(bytes.NewReader(header), upReq.src), fileExpiry, upReq.deleteKey, upReq.accessKey, upReq.srcIp)

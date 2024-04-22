@@ -55,7 +55,7 @@ func fileServeHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "public, no-cache")
 
 	modtime := time.Unix(0, 0)
-	if done := httputil.CheckPreconditions(w, r, modtime); done == true {
+	if done := httputil.CheckPreconditions(w, r, modtime); done {
 		return
 	}
 

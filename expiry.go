@@ -61,7 +61,7 @@ func listExpirationTimes() []ExpirationTime {
 			0,
 			"never",
 		})
-	} else if actualExpiryInList == false {
+	} else if !actualExpiryInList {
 		duration := time.Duration(Config.maxExpiry) * time.Second
 		expiryList = append(expiryList, ExpirationTime{
 			Config.maxExpiry,
