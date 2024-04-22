@@ -14,7 +14,6 @@ require (
 	github.com/minio/sha256-simd v1.0.1
 	github.com/russross/blackfriday v1.6.0
 	github.com/vharitonsky/iniflags v0.0.0-20180513140207-a33cd0b5f3de
-	github.com/zeebo/bencode v1.0.0
 	github.com/zenazn/goji v1.0.1
 	golang.org/x/crypto v0.22.0
 )

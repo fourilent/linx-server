@@ -21,7 +21,6 @@ You can see what it looks like using the demo: [https://put.icu/](https://put.ic
 - Display common filetypes (image, video, audio, markdown, pdf)  
 - Display syntax-highlighted code with in-place editing
 - Documented API with keys for restricting uploads
-- Torrent download of files using web seeding
 - File expiry, deletion key, file access key, and random filename options
 
 
