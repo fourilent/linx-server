@@ -375,7 +375,10 @@ func TestPostUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -409,7 +412,10 @@ func TestPostJSONUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -515,13 +521,19 @@ func TestPostExpiresJSONUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	exp, err := mw.CreateFormField("expires")
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp.Write([]byte("60"))
+	_, err = exp.Write([]byte("60"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	mw.Close()
 
@@ -577,13 +589,19 @@ func TestPostRandomizeJSONUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fw.Write([]byte("File content"))
+	_, err = fw.Write([]byte("File content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rnd, err := mw.CreateFormField("randomize")
 	if err != nil {
 		t.Fatal(err)
 	}
-	rnd.Write([]byte("true"))
+	_, err = rnd.Write([]byte("true"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	mw.Close()
 
@@ -630,7 +648,10 @@ func TestPostEmptyUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte(""))
+	_, err = fw.Write([]byte(""))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -663,7 +684,10 @@ func TestPostTooLargeUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte("test content"))
+	_, err = fw.Write([]byte("test content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)
@@ -696,7 +720,10 @@ func TestPostEmptyJSONUpload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fw.Write([]byte(""))
+	_, err = fw.Write([]byte(""))
+	if err != nil {
+		t.Fatal(err)
+	}
 	mw.Close()
 
 	req, err := http.NewRequest("POST", "/upload/", &b)

@@ -82,7 +82,10 @@ func oopsHandler(c web.C, w http.ResponseWriter, r *http.Request, rt RespType, m
 
 	if rt == RespHTML {
 		w.WriteHeader(500)
-		renderTemplate(Templates["oops.html"], pongo2.Context{"msg": msg}, r, w)
+		err := renderTemplate(Templates["oops.html"], pongo2.Context{"msg": msg}, r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	} else if rt == RespPLAIN {
 		w.WriteHeader(500)
@@ -95,7 +98,10 @@ func oopsHandler(c web.C, w http.ResponseWriter, r *http.Request, rt RespType, m
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(500)
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	} else if rt == RespAUTO {
 		if strings.EqualFold("application/json", r.Header.Get("Accept")) {
@@ -125,7 +131,10 @@ func badRequestHandler(c web.C, w http.ResponseWriter, r *http.Request, rt RespT
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	} else if rt == RespAUTO {
 		if strings.EqualFold("application/json", r.Header.Get("Accept")) {

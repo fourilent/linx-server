@@ -332,7 +332,10 @@ func main() {
 		}
 
 		log.Printf("Serving over fastcgi, bound on %s", Config.bind)
-		fcgi.Serve(listener, mux)
+		err = fcgi.Serve(listener, mux)
+		if err != nil {
+			log.Fatal("Could not serve: ", err)
+		}
 	} else if Config.certFile != "" {
 		log.Printf("Serving over https, bound on %s", Config.bind)
 		err := graceful.ListenAndServeTLS(Config.bind, Config.certFile, Config.keyFile, mux)

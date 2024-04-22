@@ -61,7 +61,7 @@ func fileServeHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "HEAD" {
 
-		storageBackend.ServeFile(fileName, w, r)
+		err = storageBackend.ServeFile(fileName, w, r)
 		if err != nil {
 			oopsHandler(c, w, r, RespAUTO, err.Error())
 			return
@@ -100,7 +100,10 @@ func checkFile(filename string) (metadata backends.Metadata, err error) {
 	}
 
 	if expiry.IsTsExpired(metadata.Expiry) {
-		storageBackend.Delete(filename)
+		err = storageBackend.Delete(filename)
+		if err != nil {
+			return
+		}
 		err = backends.NotFoundErr
 		return
 	}

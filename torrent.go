@@ -64,7 +64,11 @@ func fileTorrentHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 
 	if expiry.IsTsExpired(metadata.Expiry) {
-		storageBackend.Delete(fileName)
+		err = storageBackend.Delete(fileName)
+		if err != nil {
+			oopsHandler(c, w, r, RespAUTO, "Could not delete expired file.")
+			return
+		}
 		notFoundHandler(c, w, r)
 		return
 	}

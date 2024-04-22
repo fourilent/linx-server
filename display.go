@@ -40,7 +40,10 @@ func fileDisplayHandler(c web.C, w http.ResponseWriter, r *http.Request, fileNam
 			"mimetype":   metadata.Mimetype,
 			"sha256sum":  metadata.Sha256sum,
 		})
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespHTML, "")
+		}
 		return
 	}
 

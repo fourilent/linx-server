@@ -108,7 +108,10 @@ func uploadPostHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err == FileTooLargeError || err == backends.FileEmptyError {
 			badRequestHandler(c, w, r, RespHTML, err.Error())
@@ -143,7 +146,10 @@ func uploadPutHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err == FileTooLargeError || err == backends.FileEmptyError {
 			badRequestHandler(c, w, r, RespPLAIN, err.Error())
@@ -212,7 +218,10 @@ func uploadRemote(c web.C, w http.ResponseWriter, r *http.Request) {
 
 		js := generateJSONresponse(upload, r)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Write(js)
+		_, err := w.Write(js)
+		if err != nil {
+			oopsHandler(c, w, r, RespJSON, "")
+		}
 	} else {
 		if err != nil {
 			oopsHandler(c, w, r, RespHTML, "Could not upload file: "+err.Error())
