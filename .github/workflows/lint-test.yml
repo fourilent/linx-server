@@ -5,6 +5,7 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+    paths: ["**.go"]
 
 permissions:
   contents: read
@@ -32,6 +33,7 @@ jobs:
         uses: golangci/golangci-lint-action@v4
         with:
           version: latest
+          skip-cache: true
 
       - name: Test
         run: go test -v ./...
