@@ -7,15 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"path"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/andreimarcu/linx-server/auth/apikeys"
 	"github.com/andreimarcu/linx-server/backends"
 	"github.com/andreimarcu/linx-server/expiry"
 	"github.com/dchest/uniuri"
@@ -160,79 +157,6 @@ func uploadPutHandler(c web.C, w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Fprintf(w, "%s\n", getSiteURL(r)+upload.Filename)
-	}
-}
-
-func uploadRemote(c web.C, w http.ResponseWriter, r *http.Request) {
-	if Config.remoteAuthFile != "" {
-		key := r.FormValue("key")
-		if key == "" && Config.basicAuth {
-			_, password, ok := r.BasicAuth()
-			if ok {
-				key = password
-			}
-		}
-		result, err := apikeys.CheckAuth(remoteAuthKeys, key)
-		if err != nil || !result {
-			if Config.basicAuth {
-				rs := ""
-				if Config.siteName != "" {
-					rs = fmt.Sprintf(` realm="%s"`, Config.siteName)
-				}
-				w.Header().Set("WWW-Authenticate", `Basic`+rs)
-			}
-			unauthorizedHandler(c, w, r)
-			return
-		}
-	}
-
-	if r.FormValue("url") == "" {
-		http.Redirect(w, r, Config.sitePath, 303)
-		return
-	}
-
-	upReq := UploadRequest{}
-	grabUrl, _ := url.Parse(r.FormValue("url"))
-	directURL := r.FormValue("direct_url") == "yes"
-
-	resp, err := http.Get(grabUrl.String())
-	if err != nil {
-		oopsHandler(c, w, r, RespAUTO, "Could not retrieve URL")
-		return
-	}
-
-	upReq.filename = filepath.Base(grabUrl.Path)
-	upReq.src = http.MaxBytesReader(w, resp.Body, Config.maxSize)
-	upReq.deleteKey = r.FormValue("deletekey")
-	upReq.accessKey = r.FormValue(accessKeyParamName)
-	upReq.randomBarename = r.FormValue("randomize") == "yes"
-	upReq.expiry = parseExpiry(r.FormValue("expiry"))
-	upReq.srcIp = r.Header.Get("X-Forwarded-For")
-	upload, err := processUpload(upReq)
-
-	if strings.EqualFold("application/json", r.Header.Get("Accept")) {
-		if err != nil {
-			oopsHandler(c, w, r, RespJSON, "Could not upload file: "+err.Error())
-			return
-		}
-
-		js := generateJSONresponse(upload, r)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		_, err := w.Write(js)
-		if err != nil {
-			oopsHandler(c, w, r, RespJSON, "")
-		}
-	} else {
-		if err != nil {
-			oopsHandler(c, w, r, RespHTML, "Could not upload file: "+err.Error())
-			return
-		}
-
-		if directURL {
-			http.Redirect(w, r, Config.sitePath+Config.selifPath+upload.Filename, 303)
-		} else {
-			http.Redirect(w, r, Config.sitePath+upload.Filename, 303)
-		}
 	}
 }
 

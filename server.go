@@ -60,10 +60,8 @@ var Config struct {
 	noLogs                    bool
 	allowHotlink              bool
 	fastcgi                   bool
-	remoteUploads             bool
 	basicAuth                 bool
 	authFile                  string
-	remoteAuthFile            string
 	addHeaders                headerList
 	noDirectAgents            bool
 	forceRandomFilename       bool
@@ -82,7 +80,6 @@ var TemplateSet *pongo2.TemplateSet
 var staticBox *rice.Box
 var timeStarted time.Time
 var timeStartedStr string
-var remoteAuthKeys []string
 var storageBackend backends.StorageBackend
 var customPages = make(map[string]string)
 var customPagesNames = make(map[string]string)
@@ -189,15 +186,6 @@ func setup() *web.Mux {
 	mux.Get(Config.sitePath+"API/", apiDocHandler)
 	mux.Get(Config.sitePath+"API", http.RedirectHandler(Config.sitePath+"API/", 301))
 
-	if Config.remoteUploads {
-		mux.Get(Config.sitePath+"upload", uploadRemote)
-		mux.Get(Config.sitePath+"upload/", uploadRemote)
-
-		if Config.remoteAuthFile != "" {
-			remoteAuthKeys = apikeys.ReadAuthKeys(Config.remoteAuthFile)
-		}
-	}
-
 	mux.Post(Config.sitePath+"upload", uploadPostHandler)
 	mux.Post(Config.sitePath+"upload/", uploadPostHandler)
 	mux.Put(Config.sitePath+"upload", uploadPutHandler)
@@ -261,12 +249,8 @@ func main() {
 		"use X-Real-IP/X-Forwarded-For headers as original host")
 	flag.BoolVar(&Config.fastcgi, "fastcgi", false,
 		"serve through fastcgi")
-	flag.BoolVar(&Config.remoteUploads, "remoteuploads", false,
-		"enable remote uploads")
 	flag.StringVar(&Config.authFile, "authfile", "",
 		"path to a file containing newline-separated scrypted auth keys")
-	flag.StringVar(&Config.remoteAuthFile, "remoteauthfile", "",
-		"path to a file containing newline-separated scrypted auth keys for remote uploads")
 	flag.StringVar(&Config.contentSecurityPolicy, "contentsecuritypolicy",
 		"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'self';",
 		"value of default Content-Security-Policy header")
