@@ -342,7 +342,7 @@ func TestPostCodeExpiryJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -428,7 +428,7 @@ func TestPostJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -484,7 +484,7 @@ func TestPostJSONUpload(t *testing.T) {
 // 		}
 
 // 		var myjson RespOkJSON
-// 		err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+// 		err = json.Unmarshal(w.Body.Bytes(), &myjson)
 // 		if err != nil {
 // 			t.Fatal(err)
 // 		}
@@ -541,7 +541,7 @@ func TestPostExpiresJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -603,7 +603,7 @@ func TestPostRandomizeJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespOkJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -715,7 +715,7 @@ func TestPostEmptyJSONUpload(t *testing.T) {
 	}
 
 	var myjson RespErrJSON
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -876,7 +876,7 @@ func TestPutJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -904,7 +904,7 @@ func TestPutRandomizedJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -932,7 +932,7 @@ func TestPutExpireJSONUpload(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -961,7 +961,7 @@ func TestPutAndDelete(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1021,7 +1021,7 @@ func TestPutAndOverwrite(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1076,7 +1076,7 @@ func TestPutAndOverwriteForceRandom(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1131,7 +1131,7 @@ func TestPutAndSpecificDelete(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1309,7 +1309,7 @@ func TestPutAndGetCLI(t *testing.T) {
 	req.Header.Set("Accept", "application/json")
 	mux.ServeHTTP(w, req)
 
-	err = json.Unmarshal([]byte(w.Body.String()), &myjson)
+	err = json.Unmarshal(w.Body.Bytes(), &myjson)
 	if err != nil {
 		t.Fatal(err)
 	}
