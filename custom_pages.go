@@ -1,8 +1,8 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"strings"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func initializeCustomPages(customPagesDir string) {
-	files, err := ioutil.ReadDir(customPagesDir)
+	files, err := os.ReadDir(customPagesDir)
 	if err != nil {
 		log.Fatal("Error reading the custom pages directory: ", err)
 	}
@@ -24,7 +24,7 @@ func initializeCustomPages(customPagesDir string) {
 		}
 
 		if strings.EqualFold(string(fileName[len(fileName)-3:]), ".md") {
-			contents, err := ioutil.ReadFile(path.Join(customPagesDir, fileName))
+			contents, err := os.ReadFile(path.Join(customPagesDir, fileName))
 			if err != nil {
 				log.Fatalf("Error reading file %s", fileName)
 			}

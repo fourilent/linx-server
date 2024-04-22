@@ -3,7 +3,6 @@ package localfs
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -188,7 +187,7 @@ func (b LocalfsBackend) Size(key string) (int64, error) {
 func (b LocalfsBackend) List() ([]string, error) {
 	var output []string
 
-	files, err := ioutil.ReadDir(b.filesPath)
+	files, err := os.ReadDir(b.filesPath)
 	if err != nil {
 		return nil, err
 	}
