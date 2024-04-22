@@ -146,13 +146,13 @@ func (b LocalfsBackend) Put(key string, r io.Reader, expiry time.Time, deleteKey
 		return m, err
 	}
 
-	dst.Seek(0, 0)
+	_, err = dst.Seek(0, 0)
 	m, err = helpers.GenerateMetadata(dst)
+	_, err = dst.Seek(0, 0)
 	if err != nil {
 		os.Remove(filePath)
 		return
 	}
-	dst.Seek(0, 0)
 
 	m.Expiry = expiry
 	m.DeleteKey = deleteKey
