@@ -108,7 +108,6 @@ func (b LocalfsBackend) writeMetadata(key string, metadata backends.Metadata) er
 		Expiry:       metadata.Expiry.Unix(),
 		Size:         metadata.Size,
 		SrcIp:        metadata.SrcIp,
-		
 	}
 
 	dst, err := os.Create(metaPath)
